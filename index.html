@@ -1,619 +1,637 @@
 <!doctype html>
 <html lang="es">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Simulador de Banca (Educativo)</title>
-    <style>
-        :root {
-            --bg: #f4f6fb;
-            --card: #ffffff;
-            --text: #0f172a;
-            --muted: #64748b;
-            --primary: #1e40af;
-            --primary-2: #1d4ed8;
-            --danger: #dc2626;
-            --ok: #16a34a;
-            --shadow: 0 10px 25px rgba(2, 6, 23, .08);
-            --radius: 18px;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Banca Escuela — Simulador educativo</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#1e40af;
+      --primary-2:#1d4ed8;
+      --danger:#dc2626;
+      --ok:#16a34a;
+      --shadow: 0 16px 34px rgba(2,6,23,.10);
+      --radius: 22px;
 
-        * {
-            box-sizing: border-box
-        }
+      --cta-h: 74px; /* altura barra CTA fija */
+    }
+    *{box-sizing:border-box}
+    html{ font-size:16px; }
+    html.big{ font-size:19px; }
+    html.hc{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --text:#000000;
+      --muted:#1f2937;
+      --primary:#000000;
+      --primary-2:#000000;
+      --shadow: 0 0 0 rgba(0,0,0,0);
+    }
 
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-            background: linear-gradient(180deg, #fff, var(--bg));
-            color: var(--text);
-        }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #fff, var(--bg));
+      color:var(--text);
+    }
 
-        .app {
-            max-width: 420px;
-            margin: 0 auto;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg);
-        }
+    .app{
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+      background: var(--bg);
+    }
 
-        .status {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border-bottom: 1px solid rgba(2, 6, 23, .06);
-        }
+    .status{
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      border-bottom: 1px solid rgba(2,6,23,.06);
+      position: sticky;
+      top:0;
+      z-index: 30;
+    }
 
-        .pill {
-            font-size: 12px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #3730a3;
-            font-weight: 600;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+    .pill{
+      font-size: 0.78rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background:#fff7ed;
+      border: 1px solid rgba(234,88,12,.18);
+      color:#9a3412;
+      font-weight:900;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
 
-        .pill b {
-            font-weight: 800
-        }
+    .topbar{
+      padding: 12px 16px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      border-bottom: 1px solid rgba(2,6,23,.06);
+      position: sticky;
+      top: 54px; /* debajo status */
+      z-index: 25;
+    }
 
-        .topbar {
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border-bottom: 1px solid rgba(2, 6, 23, .06);
-        }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand .name{font-weight:900}
+    .brand .sub{font-size:0.78rem;color:var(--muted);font-weight:700}
 
-        .brand {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+    .content{
+      flex:1;
+      padding: 16px;
+      padding-bottom: 92px; /* navbar inferior */
+    }
 
-        .brand .name {
-            font-weight: 800
-        }
+    .banner{
+      background:#fff7ed;
+      border: 1px solid rgba(234,88,12,.20);
+      color:#9a3412;
+      padding: 12px 12px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.25rem;
+      margin-bottom: 12px;
+    }
 
-        .brand .sub {
-            font-size: 12px;
-            color: var(--muted)
-        }
+    .card{
+      background:var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(2,6,23,.05);
+    }
 
-        .content {
-            flex: 1;
-            padding: 16px;
-            padding-bottom: 90px;
-        }
+    h1,h2,h3{margin:0 0 8px}
+    h1{font-size:1.55rem}
+    h2{font-size:1.15rem}
+    h3{font-size:1.02rem}
+    p{margin:0 0 10px;color:var(--muted);line-height:1.35rem}
+    .small{font-size:0.8rem;color:var(--muted);font-weight:700}
 
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 14px;
-            margin-bottom: 12px;
-        }
+    .btn{
+      width:100%;
+      border:0;
+      border-radius: 999px;
+      padding: 18px 18px;
+      font-weight: 900;
+      font-size: 1.05rem;
+      cursor:pointer;
+      background: var(--primary);
+      color:#fff;
+      box-shadow: 0 12px 22px rgba(2,6,23,.14);
+      transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover{ filter: brightness(1.02); }
+    .btn:active{
+      transform: translateY(1px);
+      box-shadow: 0 7px 14px rgba(2,6,23,.12);
+    }
+    .btn.secondary{
+      background:#fff;
+      color: var(--primary);
+      border: 1px solid rgba(30, 64, 175, .18);
+      box-shadow: 0 12px 22px rgba(2,6,23,.06);
+    }
+    .btn.ghost{
+      background: transparent;
+      color: var(--primary);
+      border:1px dashed rgba(30,64,175,.35);
+      box-shadow:none;
+    }
+    .btn.small{
+      width:auto;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      box-shadow:none;
+    }
 
-        .banner {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            color: #92400e;
-            padding: 10px 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            line-height: 1.25rem;
-            margin-bottom: 12px;
-        }
+    .row{display:flex; gap:10px}
+    .row .btn{flex:1}
 
-        h1,
-        h2,
-        h3 {
-            margin: 0 0 8px
-        }
+    .link{
+      color:var(--primary-2);
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+      display:inline-block;
+      margin-top:6px;
+    }
 
-        h1 {
-            font-size: 24px
-        }
+    .divider{height:1px;background:rgba(2,6,23,.08);margin:10px 0}
 
-        h2 {
-            font-size: 18px
-        }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-bottom: 12px;
+    }
+    label{font-size:0.82rem;color:var(--muted);font-weight:900}
+    input, select{
+      width:100%;
+      padding: 13px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(2,6,23,.12);
+      outline:none;
+      font-size:1rem;
+      background:#fff;
+    }
+    input:focus, select:focus{border-color: rgba(30,64,175,.55)}
 
-        p {
-            margin: 0 0 10px;
-            color: var(--muted);
-            line-height: 1.35rem
-        }
+    /* PIN */
+    .pin{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin: 12px 0 8px;
+    }
+    .pin input{
+      width:64px;
+      text-align:center;
+      font-size:1.4rem;
+      font-weight: 900;
+      padding: 14px 10px;
+    }
 
-        .btn {
-            width: 100%;
-            border: 0;
-            border-radius: 999px;
-            padding: 14px 14px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            background: var(--primary);
-            color: #fff;
-            transition: transform .02s ease;
-        }
+    /* Segmentado tipo banca */
+    .segment{
+      display:flex;
+      gap:12px;
+      margin-top: 14px;
+    }
+    .segbtn{
+      flex:1;
+      border-radius: 999px;
+      padding: 13px 12px;
+      font-weight: 900;
+      border: 1px solid rgba(2,6,23,.10);
+      background:#fff;
+      color: var(--primary);
+      cursor:pointer;
+    }
+    .segbtn.active{
+      background: var(--primary);
+      color:#fff;
+      border-color: transparent;
+      box-shadow: 0 12px 22px rgba(2,6,23,.12);
+    }
 
-        .btn:active {
-            transform: translateY(1px)
-        }
+    /* Tarjeta cuenta */
+    .account-card{ padding: 20px; }
+    .amt{
+      font-weight: 950;
+      font-size: 2.1rem;
+      letter-spacing: -0.8px;
+    }
+    .account-meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top: 6px;
+    }
 
-        .btn.secondary {
-            background: #fff;
-            color: var(--primary);
-            border: 1px solid rgba(30, 64, 175, .25);
-        }
+    /* Lista */
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(2,6,23,.08);
+      background:#fff;
+    }
+    .item .title{font-weight:950}
+    .item .meta{font-size:0.82rem;color:var(--muted);line-height:1.1rem;font-weight:800}
+    .badge{
+      font-size:0.78rem;
+      padding:6px 10px;
+      border-radius: 999px;
+      background:#eef2ff;
+      color:#3730a3;
+      font-weight:950;
+      white-space:nowrap;
+      border: 1px solid rgba(55,48,163,.12);
+    }
+    .amt.pos{color:var(--ok)}
+    .amt.neg{color:var(--danger)}
 
-        .btn.ghost {
-            background: transparent;
-            color: var(--primary);
-            border: 1px dashed rgba(30, 64, 175, .35);
-        }
+    /* Navbar inferior */
+    .nav{
+      position: fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(420px, 100%);
+      background:#fff;
+      border-top: 1px solid rgba(2,6,23,.08);
+      display:flex;
+      justify-content:space-around;
+      padding: 10px 8px;
+      z-index: 40;
+    }
+    .nav button{
+      border:0;background:transparent;cursor:pointer;
+      font-weight:950;color:var(--muted);
+      display:flex;flex-direction:column;gap:4px;align-items:center;
+      font-size:0.78rem;
+      padding: 8px 10px;
+      border-radius: 14px;
+    }
+    .nav button.active{color:var(--primary)}
+    .hidden{display:none}
 
-        .row {
-            display: flex;
-            gap: 10px
-        }
+    /* Paso x de y */
+    .stepper{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .stepper .step{
+      font-weight:950;
+      font-size:0.9rem;
+    }
+    .progress{
+      flex:1;
+      height:8px;
+      background: rgba(2,6,23,.08);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: var(--primary);
+    }
 
-        .row .btn {
-            flex: 1
-        }
+    /* CTA fijo (botón abajo) */
+    .cta{
+      position: fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom: 62px; /* encima del nav */
+      width: min(420px, 100%);
+      padding: 10px 12px;
+      z-index: 45;
+      pointer-events:none; /* permite scroll detrás salvo dentro */
+    }
+    .cta-inner{
+      pointer-events:auto;
+      background:#fff;
+      border: 1px solid rgba(2,6,23,.08);
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 16px 34px rgba(2,6,23,.12);
+    }
+    .cta-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .cta-row .btn{ box-shadow:none; padding: 16px 16px; }
+    .cta-row .btn.secondary{ box-shadow:none; }
 
-        .link {
-            color: var(--primary-2);
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 6px;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-
-        label {
-            font-size: 13px;
-            color: var(--muted);
-            font-weight: 700
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(2, 6, 23, .12);
-            outline: none;
-            font-size: 16px;
-            background: #fff;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: rgba(30, 64, 175, .55)
-        }
-
-        .pin {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 12px 0 8px;
-        }
-
-        .pin input {
-            width: 56px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: 900;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0 8px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(2, 6, 23, .10);
-            background: #fff;
-            color: var(--muted);
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .tab.active {
-            background: #e0e7ff;
-            color: #312e81;
-            border-color: rgba(49, 46, 129, .2);
-        }
-
-        .list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px
-        }
-
-        .item {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid rgba(2, 6, 23, .08);
-            background: #fff;
-        }
-
-        .item .title {
-            font-weight: 900
-        }
-
-        .item .meta {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.1rem
-        }
-
-        .badge {
-            font-size: 12px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #3730a3;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .amt {
-            font-weight: 900;
-            font-size: 18px;
-        }
-
-        .amt.pos {
-            color: var(--ok)
-        }
-
-        .amt.neg {
-            color: var(--danger)
-        }
-
-        .nav {
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 0;
-            width: min(420px, 100%);
-            background: #fff;
-            border-top: 1px solid rgba(2, 6, 23, .08);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 8px;
-        }
-
-        .nav button {
-            border: 0;
-            background: transparent;
-            cursor: pointer;
-            font-weight: 800;
-            color: var(--muted);
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            align-items: center;
-            font-size: 12px;
-            padding: 6px 8px;
-            border-radius: 12px;
-        }
-
-        .nav button.active {
-            color: var(--primary)
-        }
-
-        .small {
-            font-size: 12px;
-            color: var(--muted)
-        }
-
-        .divider {
-            height: 1px;
-            background: rgba(2, 6, 23, .08);
-            margin: 10px 0
-        }
-
-        .hidden {
-            display: none
-        }
-
-        /* -------- Look más "banca-app moderna" -------- */
-
-        .card {
-            background: var(--card);
-            border-radius: 22px;
-            box-shadow: 0 16px 34px rgba(2, 6, 23, .10);
-            padding: 18px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(2, 6, 23, .05);
-        }
-
-        .btn {
-            width: 100%;
-            border: 0;
-            border-radius: 999px;
-            padding: 18px 18px;
-            font-weight: 900;
-            font-size: 18px;
-            cursor: pointer;
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 12px 22px rgba(2, 6, 23, .14);
-            transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
-        }
-
-        .btn:hover {
-            filter: brightness(1.02);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 7px 14px rgba(2, 6, 23, .12);
-        }
-
-        .btn.secondary {
-            background: #fff;
-            color: var(--primary);
-            border: 1px solid rgba(30, 64, 175, .18);
-            box-shadow: 0 12px 22px rgba(2, 6, 23, .06);
-        }
-
-        .btn.small {
-            width: auto;
-            padding: 10px 14px;
-            font-size: 14px;
-            border-radius: 999px;
-        }
-
-        /* Segmentado tipo "Movimientos / Cartolas" */
-        .segment {
-            display: flex;
-            gap: 12px;
-            margin-top: 14px;
-        }
-
-        .segbtn {
-            flex: 1;
-            border-radius: 999px;
-            padding: 13px 12px;
-            font-weight: 900;
-            border: 1px solid rgba(2, 6, 23, .10);
-            background: #fff;
-            color: var(--primary);
-            cursor: pointer;
-        }
-
-        .segbtn.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: transparent;
-            box-shadow: 0 12px 22px rgba(2, 6, 23, .12);
-        }
-
-        /* Tarjeta de cuenta más protagonista */
-        .account-card {
-            padding: 20px;
-        }
-
-        .account-card .amt {
-            font-size: 38px;
-            letter-spacing: -0.8px;
-        }
-
-        .account-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 6px;
-        }
-
-        .account-meta .small {
-            opacity: .95
-        }
-
-        /* Banner modo práctica más “app” */
-        .banner {
-            background: #fff7ed;
-            border: 1px solid rgba(234, 88, 12, .20);
-            color: #9a3412;
-            padding: 12px 12px;
-            border-radius: 14px;
-            font-size: 13px;
-            line-height: 1.25rem;
-        }
-    </style>
+    /* Bottom sheet */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.45);
+      display:none;
+      z-index: 60;
+    }
+    .sheet{
+      position: fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom: -520px;
+      width: min(420px, 100%);
+      background:#fff;
+      border-radius: 22px 22px 0 0;
+      border: 1px solid rgba(2,6,23,.10);
+      box-shadow: 0 -18px 40px rgba(2,6,23,.20);
+      padding: 14px 16px 18px;
+      z-index: 70;
+      transition: bottom .22s ease;
+    }
+    .sheet.open{ bottom: 0; }
+    .overlay.open{ display:block; }
+    .grab{
+      width: 44px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(2,6,23,.20);
+      margin: 6px auto 12px;
+    }
+    .sheet-title{
+      font-weight: 950;
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+    .sheet .item{
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .sheet .item .title{ font-size: 1rem; }
+  </style>
 </head>
 
 <body>
-    <div class="app">
-        <div class="status">
-            <div class="pill"><b>Modo práctica</b> Simulador educativo</div>
-            <div class="small" id="clock"></div>
-        </div>
-
-        <div class="topbar">
-            <div class="brand">
-                <div class="name">Banca Escuela</div>
-                <div class="sub">Aplicación de aprendizaje (no oficial)</div>
-            </div>
-            <div class="small" id="userChip"></div>
-        </div>
-
-        <div class="content" id="view"></div>
-
-        <div class="nav" id="nav" class="hidden">
-            <button data-nav="home" id="navHome">Inicio</button>
-            <button data-nav="transfer" id="navTransfer">Transferir</button>
-            <button data-nav="security" id="navSecurity">Seguridad</button>
-            <button data-nav="more" id="navMore">Más</button>
-        </div>
+  <div class="app">
+    <div class="status">
+      <div class="pill">Modo práctica · Simulador educativo</div>
+      <div class="small" id="clock"></div>
     </div>
 
-    <script>
-        /** =========================
-         *  Estado (simulación local)
-         *  ========================= */
-        const state = {
-            acceptedDisclaimer: false,
-            userName: "David (perfil de práctica)",
-            pinSet: true,        // si quieres obligar a "crear PIN", pon false y adapta texto
-            authed: false,
-            pin: "1234",         // PIN de práctica
-            activeTab: "guardados",
-            accounts: [
-                { id: "acc1", name: "Cuenta Principal", number: "00023160749", balance: 2225 },
-                { id: "acc2", name: "Cuenta Pro", number: "37870206438", balance: 0 },
-            ],
-            transactions: [
-                { date: "viernes, 12 de diciembre de 2025", desc: "Pago Yanjlia", amount: -3300 },
-                { date: "viernes, 5 de diciembre de 2025", desc: "Pago Portal Ñuñoa", amount: -12200 },
-                { date: "viernes, 5 de diciembre de 2025", desc: "Transferencia recibida", amount: 6100 },
-                { date: "viernes, 5 de diciembre de 2025", desc: "Transferencia enviada", amount: -4350 },
-                { date: "viernes, 5 de diciembre de 2025", desc: "Transferencia enviada", amount: -1945 },
-            ],
-            recipients: [
-                { id: "r1", name: "Alejandra Leal", bank: "Banco Demo", account: "Cuenta Demo 14598034", alias: "" },
-                { id: "r2", name: "Alejandra Olivares Valdés", bank: "Banco Demo", account: "Cuenta Demo 9708677", alias: "Mamá" },
-                { id: "r3", name: "Ana María Salgado Vargas", bank: "Banco Demo", account: "Cuenta Demo 65148250", alias: "Anita" },
-                { id: "r4", name: "Flavio Emilio González", bank: "Banco Demo", account: "Cuenta Demo 0017597579", alias: "" },
-            ],
-            draftRecipientId: "",
-            selectedRecipientId: "r4",
-            transferDraft: {
-                fromAccountId: "acc2",
-                amount: "",
-                message: "",
-                saveRecipient: "no",
-                alias: ""
-            }
-        };
+    <div class="topbar">
+      <div class="brand">
+        <div class="name">Banca Escuela</div>
+        <div class="sub">Aplicación de aprendizaje (no oficial)</div>
+      </div>
+      <div class="small" id="userChip"></div>
+    </div>
 
-        const $view = document.getElementById("view");
-        const $nav = document.getElementById("nav");
-        const $userChip = document.getElementById("userChip");
+    <div class="content" id="view"></div>
 
-        function moneyCLP(n) {
-            const sign = n < 0 ? "-" : "";
-            const abs = Math.abs(n);
-            // 2225 -> 2.225
-            return sign + "$" + abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+    <div class="nav hidden" id="nav">
+      <button data-nav="home" id="navHome">Inicio</button>
+      <button data-nav="transfer" id="navTransfer">Transferir</button>
+      <button data-nav="security" id="navSecurity">Seguridad</button>
+      <button data-nav="more" id="navMore">Más</button>
+    </div>
+  </div>
 
-        function setActiveNav(key) {
-            for (const id of ["navHome", "navTransfer", "navSecurity", "navMore"]) {
-                document.getElementById(id).classList.remove("active");
-            }
-            if (key === "home") document.getElementById("navHome").classList.add("active");
-            if (key === "transfer") document.getElementById("navTransfer").classList.add("active");
-            if (key === "security") document.getElementById("navSecurity").classList.add("active");
-            if (key === "more") document.getElementById("navMore").classList.add("active");
-        }
+  <!-- CTA fijo -->
+  <div class="cta hidden" id="cta">
+    <div class="cta-inner">
+      <div class="cta-row" id="ctaRow"></div>
+    </div>
+  </div>
 
-        /** ==============
-         *  Ruteo simple
-         *  ============== */
-        let currentRoute = "disclaimer";
-        function go(route) {
-            currentRoute = route;
-            render();
-        }
+  <!-- Bottom sheet Transferir -->
+  <div class="overlay" id="overlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <div class="sheet-title">Transferir</div>
+    <div class="small" style="margin-bottom:12px;">Selecciona una opción (modo práctica).</div>
 
-        function render() {
-            // Chip usuario
-            $userChip.textContent = state.authed ? state.userName : "";
+    <div class="list">
+      <div class="item" id="sheetThird">
+        <div>
+          <div class="title">A terceros</div>
+          <div class="meta">Transferir a una persona o cuenta guardada</div>
+        </div>
+        <span class="badge">Opción</span>
+      </div>
 
-            // Nav visible solo si está autenticado
-            $nav.style.display = state.authed ? "flex" : "none";
+      <div class="item" id="sheetBetween">
+        <div>
+          <div class="title">Entre mis cuentas</div>
+          <div class="meta">Mover dinero entre cuentas del simulador</div>
+        </div>
+        <span class="badge">Opción</span>
+      </div>
 
-            // Render por ruta
-            if (!state.acceptedDisclaimer) return renderDisclaimer();
+      <button class="btn secondary" id="sheetClose" style="margin-top:8px;">Cerrar</button>
+    </div>
+  </div>
 
-            // Si aún no estás autenticado, permite navegar entre login y pin
-            if (!state.authed) {
-                if (currentRoute === "pin") return renderPin();
-                return renderLogin();
-            }
+<script>
+/* =========================
+   Estado (simulación local)
+   ========================= */
+const state = {
+  acceptedDisclaimer: false,
+  userName: "Perfil de práctica",
+  authed: false,
+  pin: "1234",
+  accessibility: {
+    bigText: false,
+    highContrast: false,
+  },
+  activeTab: "guardados",
+  accounts: [
+    { id:"acc1", name:"Cuenta Principal", number:"00023160749", balance: 2225 },
+    { id:"acc2", name:"Cuenta Pro", number:"37870206438", balance: 0 },
+  ],
+  transactions: [
+    { date:"viernes, 12 de diciembre de 2025", desc:"Pago de ejemplo", amount:-3300 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Pago de ejemplo", amount:-12200 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia recibida (simulada)", amount:6100 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia enviada (simulada)", amount:-4350 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia enviada (simulada)", amount:-1945 },
+  ],
+  recipients: [
+    { id:"r1", name:"Alejandra Leal", bank:"Banco Demo", account:"Cuenta Demo 14598034", alias:"" },
+    { id:"r2", name:"Alejandra Olivares Valdés", bank:"Banco Demo", account:"Cuenta Demo 9708677", alias:"Mamá" },
+    { id:"r3", name:"Ana María Salgado Vargas", bank:"Banco Demo", account:"Cuenta Demo 65148250", alias:"Anita" },
+    { id:"r4", name:"Flavio Emilio González", bank:"Banco Demo", account:"Cuenta Demo 0017597579", alias:"" },
+  ],
+  selectedRecipientId: "r4",
+  transferDraft: {
+    fromAccountId: "acc2",
+    amount: "",
+    message: "",
+    saveRecipient: "no",
+    alias: ""
+  }
+};
 
-            // Desde aquí, ya autenticado
-            switch (currentRoute) {
-                case "home": return renderHome();
-                case "movements": return renderMovements();
-                case "transfer-menu": return renderTransferMenu();
-                case "recipients": return renderRecipients();
-                case "new-recipient": return renderNewRecipient();
-                case "transfer-form": return renderTransferForm();
-                case "transfer-confirm": return renderTransferConfirm();
-                case "security": return renderSecurity();
-                case "more": return renderMore();
-                default: return renderHome();
-            }
+const $view = document.getElementById("view");
+const $nav = document.getElementById("nav");
+const $userChip = document.getElementById("userChip");
+const $cta = document.getElementById("cta");
+const $ctaRow = document.getElementById("ctaRow");
 
-        }
+/* ======================
+   Utilidades
+   ====================== */
+function moneyCLP(n){
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(n);
+  return sign + "$" + abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function groupBy(arr, fn){
+  return arr.reduce((acc, item)=>{
+    const k = fn(item);
+    (acc[k] ||= []).push(item);
+    return acc;
+  }, {});
+}
 
-        /** =======================
-         *  Vistas (pantallas)
-         *  ======================= */
-        function renderDisclaimer() {
-            $view.innerHTML = `
+/* ======================
+   Accesibilidad
+   ====================== */
+function applyAccessibility(){
+  document.documentElement.classList.toggle("big", !!state.accessibility.bigText);
+  document.documentElement.classList.toggle("hc", !!state.accessibility.highContrast);
+}
+
+/* ======================
+   Router
+   ====================== */
+let currentRoute = "disclaimer";
+function go(route){
+  currentRoute = route;
+  render();
+}
+
+function setActiveNav(key){
+  for (const id of ["navHome","navTransfer","navSecurity","navMore"]) {
+    document.getElementById(id).classList.remove("active");
+  }
+  if (key === "home") document.getElementById("navHome").classList.add("active");
+  if (key === "transfer") document.getElementById("navTransfer").classList.add("active");
+  if (key === "security") document.getElementById("navSecurity").classList.add("active");
+  if (key === "more") document.getElementById("navMore").classList.add("active");
+}
+
+function setCTA(buttons){
+  if (!buttons || buttons.length === 0){
+    $cta.classList.add("hidden");
+    $ctaRow.innerHTML = "";
+    return;
+  }
+  $cta.classList.remove("hidden");
+  $ctaRow.innerHTML = buttons.map(b => {
+    const cls = b.kind === "secondary" ? "btn secondary" : "btn";
+    return `<button class="${cls}" id="${b.id}">${escapeHtml(b.label)}</button>`;
+  }).join("");
+  // wire
+  buttons.forEach(b=>{
+    document.getElementById(b.id).onclick = b.onClick;
+  });
+}
+
+function render(){
+  applyAccessibility();
+
+  $userChip.textContent = state.authed ? state.userName : "";
+  $nav.style.display = state.authed ? "flex" : "none";
+
+  // Oculta CTA por defecto; cada vista lo activa si corresponde
+  setCTA([]);
+
+  if (!state.acceptedDisclaimer) return renderDisclaimer();
+
+  // No autenticado: permitir login y pin
+  if (!state.authed) {
+    if (currentRoute === "pin") return renderPin();
+    return renderLogin();
+  }
+
+  switch(currentRoute){
+    case "home": return renderHome();
+    case "movements": return renderMovements();
+    case "recipients": return renderRecipients();         // Paso 1 de 3
+    case "new-recipient": return renderNewRecipient();    // Paso 1 de 3 (variante)
+    case "transfer-form": return renderTransferForm();    // Paso 2 de 3
+    case "transfer-confirm": return renderTransferConfirm(); // Paso 3 de 3
+    case "security": return renderSecurity();
+    case "more": return renderMore();
+    default: return renderHome();
+  }
+}
+
+/* ======================
+   Vistas
+   ====================== */
+function renderDisclaimer(){
+  $view.innerHTML = `
     <div class="banner">
-      <b>Importante:</b> Esto es un simulador educativo. No pertenece a ninguna institución financiera
-      y no realiza operaciones reales. No ingreses datos bancarios reales.
+      <b>Importante:</b> Esta aplicación es un simulador educativo. No pertenece a ningún banco y no realiza operaciones reales.
+      No ingreses datos bancarios reales.
     </div>
 
     <div class="card">
       <h1>Simulador de banca</h1>
-      <p>Úsalo para aprender paso a paso cómo funciona una app bancaria: revisar saldo, ver movimientos y simular transferencias.</p>
+      <p>Aprende paso a paso: revisar saldo, ver movimientos y simular transferencias.</p>
       <div class="divider"></div>
       <button class="btn" id="accept">Entiendo y continuar</button>
       <button class="btn secondary" id="exit" style="margin-top:10px;">Salir</button>
     </div>
   `;
-            document.getElementById("accept").onclick = () => {
-                state.acceptedDisclaimer = true;
-                go("login");
-            };
-            document.getElementById("exit").onclick = () => {
-                // En web, "salir" puede ocultar contenido
-                $view.innerHTML = `<div class="card"><h2>Sesión finalizada</h2><p>Puedes cerrar esta pestaña.</p></div>`;
-            };
-        }
+  document.getElementById("accept").onclick = () => {
+    state.acceptedDisclaimer = true;
+    go("login");
+  };
+  document.getElementById("exit").onclick = () => {
+    $view.innerHTML = `<div class="card"><h2>Sesión finalizada</h2><p>Puedes cerrar esta pestaña.</p></div>`;
+  };
+}
 
-        function renderLogin() {
-            $view.innerHTML = `
+function renderLogin(){
+  $view.innerHTML = `
     <div class="banner">
-      <b>Modo práctica:</b> simulador educativo. No es un banco real y no realiza operaciones.
+      <b>Modo práctica:</b> simulador educativo. No es una aplicación oficial.
     </div>
 
     <div class="card">
       <h1 style="margin-bottom:6px;">Hola</h1>
-      <div style="font-weight:900;font-size:20px;margin-bottom:6px;">${state.userName}</div>
+      <div style="font-weight:950;font-size:1.2rem;margin-bottom:6px;">${escapeHtml(state.userName)}</div>
       <p class="small">Acceso de demostración para aprender la mecánica de una app bancaria.</p>
 
       <div style="height:12px;"></div>
@@ -631,18 +649,17 @@
       <button class="btn secondary" id="closeAbout">Cerrar</button>
     </div>
   `;
-            document.getElementById("enter").onclick = () => go("pin");
-            document.getElementById("about").onclick = () => document.getElementById("aboutCard").classList.toggle("hidden");
-            document.getElementById("closeAbout").onclick = () => document.getElementById("aboutCard").classList.add("hidden");
-        }
+  document.getElementById("enter").onclick = () => go("pin");
+  document.getElementById("about").onclick = () => document.getElementById("aboutCard").classList.toggle("hidden");
+  document.getElementById("closeAbout").onclick = () => document.getElementById("aboutCard").classList.add("hidden");
+}
 
-
-        function renderPin() {
-            $view.innerHTML = `
-    <div class="banner"><b>Modo práctica:</b> Usa una clave inventada. No corresponde a tu banco.</div>
+function renderPin(){
+  $view.innerHTML = `
+    <div class="banner"><b>Modo práctica:</b> Usa una clave inventada. Ejemplo para clase: <b>1234</b>.</div>
 
     <div class="card">
-      <h2>${state.pinSet ? "Ingresa tu clave de práctica" : "Crea tu clave de práctica"}</h2>
+      <h2>Ingresa tu clave de práctica</h2>
       <p>Ingresa 4 dígitos.</p>
 
       <div class="pin">
@@ -653,6 +670,7 @@
       </div>
 
       <button class="btn" id="pinOk">Aceptar</button>
+
       <div style="text-align:center;">
         <a class="link" id="pinHelp">¿Problemas con tu clave?</a>
       </div>
@@ -660,58 +678,59 @@
     </div>
   `;
 
-            const inputs = ["p1", "p2", "p3", "p4"].map(id => document.getElementById(id));
-            inputs[0].focus();
+  const inputs = ["p1","p2","p3","p4"].map(id => document.getElementById(id));
+  inputs[0].focus();
 
-            inputs.forEach((inp, idx) => {
-                inp.addEventListener("input", () => {
-                    inp.value = (inp.value || "").replace(/\D/g, "").slice(0, 1);
-                    if (inp.value && idx < inputs.length - 1) inputs[idx + 1].focus();
-                });
-                inp.addEventListener("keydown", (e) => {
-                    if (e.key === "Backspace" && !inp.value && idx > 0) inputs[idx - 1].focus();
-                });
-            });
+  inputs.forEach((inp, idx) => {
+    inp.addEventListener("input", () => {
+      inp.value = (inp.value || "").replace(/\D/g,"").slice(0,1);
+      if (inp.value && idx < inputs.length-1) inputs[idx+1].focus();
+    });
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !inp.value && idx>0) inputs[idx-1].focus();
+    });
+  });
 
-            document.getElementById("pinHelp").onclick = () => {
-                const msg = document.getElementById("pinMsg");
-                msg.classList.remove("hidden");
-                msg.textContent = "En modo práctica puedes usar 1234 (PIN de ejemplo) o inventar uno si el docente lo indica.";
-            };
+  document.getElementById("pinHelp").onclick = () => {
+    const msg = document.getElementById("pinMsg");
+    msg.classList.remove("hidden");
+    msg.style.color = "";
+    msg.textContent = "En modo práctica puedes usar 1234 (PIN de ejemplo).";
+  };
 
-            document.getElementById("pinOk").onclick = () => {
-                const entered = inputs.map(i => i.value).join("");
-                if (entered.length !== 4) return showPinError("Ingresa los 4 dígitos.");
-                if (state.pinSet && entered !== state.pin) return showPinError("Clave incorrecta (modo práctica). Prueba 1234.");
-                // Auth ok
-                state.authed = true;
-                go("home");
-            };
+  document.getElementById("pinOk").onclick = () => {
+    const entered = inputs.map(i=>i.value).join("");
+    if (entered.length !== 4) return showPinError("Ingresa los 4 dígitos.");
+    if (entered !== state.pin) return showPinError("Clave incorrecta (modo práctica). Prueba 1234.");
 
-            function showPinError(text) {
-                const msg = document.getElementById("pinMsg");
-                msg.classList.remove("hidden");
-                msg.style.color = "#b91c1c";
-                msg.textContent = text;
-            }
-        }
+    state.authed = true;
+    go("home");
+  };
 
-        function renderHome() {
-            setActiveNav("home");
+  function showPinError(text){
+    const msg = document.getElementById("pinMsg");
+    msg.classList.remove("hidden");
+    msg.style.color = "#b91c1c";
+    msg.textContent = text;
+  }
+}
 
-            const mainAcc = state.accounts[0];
-            $view.innerHTML = `
-    <div class="banner"><b>Simulador educativo:</b> no hay dinero real, no hay transferencias reales.</div>
+function renderHome(){
+  setActiveNav("home");
+
+  const mainAcc = state.accounts[0];
+  $view.innerHTML = `
+    <div class="banner"><b>Recordatorio:</b> simulador educativo. No hay dinero real ni operaciones reales.</div>
 
     <div class="card account-card">
-      <h2 style="margin-bottom:4px;">${mainAcc.name}</h2>
+      <h2 style="margin-bottom:4px;">${escapeHtml(mainAcc.name)}</h2>
 
       <div class="account-meta">
-        <div class="small">N° ${mainAcc.number}</div>
+        <div class="small">N° ${escapeHtml(mainAcc.number)}</div>
         <div class="small">Saldo disponible</div>
       </div>
 
-      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px;">
+      <div style="margin-top:8px;">
         <div class="amt">${moneyCLP(mainAcc.balance)}</div>
       </div>
 
@@ -731,141 +750,125 @@
     </div>
   `;
 
-            document.getElementById("goMov").onclick = () => go("movements");
-            document.getElementById("goDocs").onclick = () => alert("Documentos (simulado): aquí podrías mostrar PDFs de ejemplo.");
-            document.getElementById("quickTransfer").onclick = () => go("transfer-menu");
-            document.getElementById("quickRecipients").onclick = () => go("recipients");
-        }
+  document.getElementById("goMov").onclick = () => go("movements");
+  document.getElementById("goDocs").onclick = () => alert("Documentos (simulado): aquí podrías mostrar PDFs de ejemplo.");
+  document.getElementById("quickTransfer").onclick = () => openSheet(); // bottom sheet
+  document.getElementById("quickRecipients").onclick = () => go("recipients");
+}
 
+function renderMovements(){
+  setActiveNav("home");
 
-        function renderMovements() {
-            setActiveNav("home");
-
-            const groups = groupBy(state.transactions, t => t.date);
-            const htmlGroups = Object.entries(groups).map(([date, items]) => {
-                const li = items.map(t => `
+  const groups = groupBy(state.transactions, t => t.date);
+  const htmlGroups = Object.entries(groups).map(([date, items]) => {
+    const li = items.map(t => `
       <div class="item">
         <div>
           <div class="title">${escapeHtml(t.desc)}</div>
-          <div class="meta">${date}</div>
+          <div class="meta">${escapeHtml(date)}</div>
         </div>
-        <div class="amt ${t.amount >= 0 ? "pos" : "neg"}">${moneyCLP(t.amount)}</div>
+        <div class="amt ${t.amount>=0 ? "pos":"neg"}" style="font-size:1.1rem;">${moneyCLP(t.amount)}</div>
       </div>
     `).join("");
-                return `<h3 style="margin:16px 0 8px;">${escapeHtml(date)}</h3><div class="list">${li}</div>`;
-            }).join("");
+    return `<h3 style="margin:16px 0 8px;">${escapeHtml(date)}</h3><div class="list">${li}</div>`;
+  }).join("");
 
-            $view.innerHTML = `
+  $view.innerHTML = `
     <div class="card">
       <h2>Saldos y movimientos</h2>
-      <p class="small">Ejemplo de lista de movimientos (ficticios).</p>
+      <p class="small">Ejemplo de movimientos ficticios.</p>
       <button class="btn secondary" id="backHome">Volver a Inicio</button>
     </div>
     ${htmlGroups}
   `;
-            document.getElementById("backHome").onclick = () => go("home");
-        }
+  document.getElementById("backHome").onclick = () => go("home");
+}
 
-        function renderTransferMenu() {
-            setActiveNav("transfer");
+/* Paso 1 de 3 */
+function renderRecipients(){
+  setActiveNav("transfer");
+  const filtered = state.recipients;
 
-            $view.innerHTML = `
-    <div class="banner"><b>Recordatorio:</b> esta transferencia será una simulación.</div>
-
+  $view.innerHTML = `
     <div class="card">
-      <h2>Transferir</h2>
-      <button class="btn" id="toThird">A terceros</button>
-      <button class="btn secondary" id="between" style="margin-top:10px;">Entre mis cuentas</button>
+      ${stepperHTML(1,3)}
+      <h2>¿A quién quieres transferir?</h2>
+      <p class="small">Selecciona un destinatario o agrega uno nuevo.</p>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn secondary" id="newR">Nuevo destinatario</button>
+        <button class="btn secondary" id="myAcc">Entre mis cuentas</button>
+      </div>
+
+      <div class="field" style="margin-top:12px;">
+        <label>Buscar por nombre o alias</label>
+        <input id="q" placeholder="Ej: Mamá, Anita..." />
+      </div>
+
+      <div class="divider"></div>
+      <div class="small">Destinatarios</div>
+    </div>
+
+    <div class="list" id="recList">
+      ${renderRecipientList(filtered)}
     </div>
   `;
-            document.getElementById("toThird").onclick = () => go("recipients");
-            document.getElementById("between").onclick = () => alert("Entre mis cuentas (simulado): puedes implementarlo como un segundo flujo.");
-        }
 
-        function renderRecipients() {
-            setActiveNav("transfer");
+  setCTA([
+    { id:"ctaBack", label:"Volver", kind:"secondary", onClick: ()=> go("home") }
+  ]);
 
-            const filtered = state.recipients; // aquí puedes filtrar por tabs y búsqueda
-            const list = filtered.map(r => `
+  document.getElementById("newR").onclick = () => go("new-recipient");
+  document.getElementById("myAcc").onclick = () => alert("Entre mis cuentas (simulado): puedes implementar este flujo luego.");
+
+  function wirePickButtons(){
+    document.querySelectorAll("[data-pick]").forEach(b=>{
+      b.onclick = () => {
+        state.selectedRecipientId = b.dataset.pick;
+        state.transferDraft.amount = "";
+        state.transferDraft.message = "";
+        state.transferDraft.saveRecipient = "no";
+        state.transferDraft.alias = "";
+        go("transfer-form");
+      };
+    });
+  }
+
+  wirePickButtons();
+
+  const q = document.getElementById("q");
+  q.addEventListener("input", () => {
+    const term = q.value.trim().toLowerCase();
+    const res = state.recipients.filter(r => {
+      const hay = `${r.name} ${r.alias} ${r.bank} ${r.account}`.toLowerCase();
+      return hay.includes(term);
+    });
+    document.getElementById("recList").innerHTML = renderRecipientList(res);
+    wirePickButtons();
+  });
+}
+
+function renderRecipientList(list){
+  if (!list || list.length === 0){
+    return `<div class="card"><p>No hay resultados.</p></div>`;
+  }
+  return list.map(r => `
     <div class="item">
       <div>
         <div class="title">${escapeHtml(r.alias ? `${r.alias} — ${r.name}` : r.name)}</div>
         <div class="meta">${escapeHtml(r.bank)} · ${escapeHtml(r.account)}</div>
       </div>
-      <button class="btn secondary" style="width:auto;padding:10px 14px;" data-pick="${r.id}">Elegir</button>
+      <button class="btn secondary small" data-pick="${r.id}">Elegir</button>
     </div>
   `).join("");
+}
 
-            $view.innerHTML = `
+/* Paso 1 de 3 (agregar destinatario) */
+function renderNewRecipient(){
+  setActiveNav("transfer");
+  $view.innerHTML = `
     <div class="card">
-      <h2>¿A quién quieres transferir?</h2>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn" id="newR">Nuevo destinatario</button>
-        <button class="btn secondary" id="myAcc">Entre mis cuentas</button>
-      </div>
-
-      <div class="field" style="margin-top:12px;">
-        <label>Buscar por nombre, alias o ID (práctica)</label>
-        <input id="q" placeholder="Ej: Alejandra, Mamá, r1..." />
-      </div>
-
-      <div class="tabs">
-        <button class="tab ${state.activeTab === "favoritos" ? "active" : ""}" data-tab="favoritos">Favoritos</button>
-        <button class="tab ${state.activeTab === "guardados" ? "active" : ""}" data-tab="guardados">Guardados</button>
-        <button class="tab ${state.activeTab === "contactos" ? "active" : ""}" data-tab="contactos">Contactos</button>
-      </div>
-    </div>
-
-    <div class="list" id="recList">${list}</div>
-  `;
-
-            document.querySelectorAll(".tab").forEach(btn => {
-                btn.onclick = () => { state.activeTab = btn.dataset.tab; renderRecipients(); };
-            });
-
-            const q = document.getElementById("q");
-            q.addEventListener("input", () => {
-                const term = q.value.trim().toLowerCase();
-                const res = state.recipients.filter(r => {
-                    const hay = `${r.id} ${r.name} ${r.alias} ${r.bank} ${r.account}`.toLowerCase();
-                    return hay.includes(term);
-                });
-                document.getElementById("recList").innerHTML = res.map(r => `
-      <div class="item">
-        <div>
-          <div class="title">${escapeHtml(r.alias ? `${r.alias} — ${r.name}` : r.name)}</div>
-          <div class="meta">${escapeHtml(r.bank)} · ${escapeHtml(r.account)}</div>
-        </div>
-        <button class="btn secondary" style="width:auto;padding:10px 14px;" data-pick="${r.id}">Elegir</button>
-      </div>
-    `).join("");
-                wirePickButtons();
-            });
-
-            document.getElementById("newR").onclick = () => go("new-recipient");
-            document.getElementById("myAcc").onclick = () => alert("Entre mis cuentas (simulado).");
-
-            wirePickButtons();
-
-            function wirePickButtons() {
-                document.querySelectorAll("[data-pick]").forEach(b => {
-                    b.onclick = () => {
-                        state.selectedRecipientId = b.dataset.pick;
-                        // defaults de borrador
-                        state.transferDraft.amount = "";
-                        state.transferDraft.message = "";
-                        state.transferDraft.saveRecipient = "no";
-                        state.transferDraft.alias = "";
-                        go("transfer-form");
-                    };
-                });
-            }
-        }
-
-        function renderNewRecipient() {
-            setActiveNav("transfer");
-            $view.innerHTML = `
-    <div class="card">
+      ${stepperHTML(1,3)}
       <h2>Nuevo destinatario</h2>
       <p>Ingresa un identificador de práctica. Ejemplo: 12.345.678-9 (solo demostración).</p>
 
@@ -874,43 +877,46 @@
         <input id="doc" placeholder="Ej: 12.345.678-9" />
       </div>
 
-      <button class="btn" id="cont">Continuar</button>
-      <button class="btn secondary" id="back" style="margin-top:10px;">Volver</button>
-      <p class="small" id="msg" style="margin-top:10px;"></p>
+      <p class="small" id="msg" style="margin-top:6px;color:#b91c1c;"></p>
     </div>
   `;
-            document.getElementById("back").onclick = () => go("recipients");
-            document.getElementById("cont").onclick = () => {
-                const v = document.getElementById("doc").value.trim();
-                if (!v) return (document.getElementById("msg").textContent = "Ingresa un ID para continuar.");
-                // Crea destinatario ficticio
-                const id = "r" + (state.recipients.length + 1);
-                state.recipients.unshift({
-                    id,
-                    name: "Destinatario de práctica",
-                    bank: "Banco Demo",
-                    account: `Cuenta Demo ${Math.floor(10000000 + Math.random() * 90000000)}`,
-                    alias: ""
-                });
-                state.selectedRecipientId = id;
-                go("transfer-form");
-            };
-        }
 
-        function renderTransferForm() {
-            setActiveNav("transfer");
+  setCTA([
+    { id:"ctaBack", label:"Volver", kind:"secondary", onClick: ()=> go("recipients") },
+    { id:"ctaContinue", label:"Continuar", kind:"primary", onClick: ()=>{
+        const v = document.getElementById("doc").value.trim();
+        if (!v) return (document.getElementById("msg").textContent = "Ingresa un ID para continuar.");
 
-            const rec = state.recipients.find(r => r.id === state.selectedRecipientId);
-            const accOptions = state.accounts.map(a => `
-    <option value="${a.id}" ${a.id === state.transferDraft.fromAccountId ? "selected" : ""}>
-      ${a.name} (${moneyCLP(a.balance)})
+        const id = "r" + (state.recipients.length + 1);
+        state.recipients.unshift({
+          id,
+          name: "Destinatario de práctica",
+          bank: "Banco Demo",
+          account: `Cuenta Demo ${Math.floor(10000000 + Math.random()*90000000)}`,
+          alias: ""
+        });
+        state.selectedRecipientId = id;
+        go("transfer-form");
+      }
+    }
+  ]);
+}
+
+/* Paso 2 de 3 */
+function renderTransferForm(){
+  setActiveNav("transfer");
+  const rec = state.recipients.find(r=>r.id===state.selectedRecipientId);
+  const accOptions = state.accounts.map(a => `
+    <option value="${a.id}" ${a.id===state.transferDraft.fromAccountId ? "selected":""}>
+      ${escapeHtml(a.name)} (${moneyCLP(a.balance)})
     </option>
   `).join("");
 
-            $view.innerHTML = `
+  $view.innerHTML = `
     <div class="banner"><b>Simulación:</b> al confirmar no se enviará dinero real.</div>
 
     <div class="card">
+      ${stepperHTML(2,3)}
       <h2>Transferir</h2>
 
       <div class="field">
@@ -918,12 +924,15 @@
         <select id="from">${accOptions}</select>
       </div>
 
-      <div class="card" style="box-shadow:none;border:1px solid rgba(2,6,23,.08);">
-        <div class="title">${escapeHtml(rec.alias ? `${rec.alias} — ${rec.name}` : rec.name)}</div>
-        <div class="meta">${escapeHtml(rec.bank)} · ${escapeHtml(rec.account)}</div>
+      <div class="item" style="border-radius:18px;">
+        <div>
+          <div class="title">${escapeHtml(rec.alias ? `${rec.alias} — ${rec.name}` : rec.name)}</div>
+          <div class="meta">${escapeHtml(rec.bank)} · ${escapeHtml(rec.account)}</div>
+        </div>
+        <span class="badge">Destinatario</span>
       </div>
 
-      <div class="field" style="margin-top:10px;">
+      <div class="field" style="margin-top:12px;">
         <label>Ingresa un monto (simulado)</label>
         <input id="amount" inputmode="numeric" placeholder="Ej: 5000" value="${escapeHtml(state.transferDraft.amount)}" />
       </div>
@@ -937,8 +946,8 @@
       <div class="field">
         <label>¿Guardar este destinatario?</label>
         <select id="save">
-          <option value="si" ${state.transferDraft.saveRecipient === "si" ? "selected" : ""}>Sí</option>
-          <option value="no" ${state.transferDraft.saveRecipient === "no" ? "selected" : ""}>No</option>
+          <option value="si" ${state.transferDraft.saveRecipient==="si"?"selected":""}>Sí</option>
+          <option value="no" ${state.transferDraft.saveRecipient==="no"?"selected":""}>No</option>
         </select>
       </div>
 
@@ -947,44 +956,45 @@
         <input id="alias" placeholder="Ej: Vecina" value="${escapeHtml(state.transferDraft.alias)}" maxlength="25" />
       </div>
 
-      <button class="btn" id="next">Continuar</button>
-      <button class="btn secondary" id="back" style="margin-top:10px;">Volver</button>
-
-      <p class="small" id="err" style="margin-top:10px;color:#b91c1c;"></p>
+      <p class="small" id="err" style="margin-top:6px;color:#b91c1c;"></p>
     </div>
   `;
 
-            document.getElementById("back").onclick = () => go("recipients");
-            document.getElementById("from").onchange = (e) => state.transferDraft.fromAccountId = e.target.value;
-            document.getElementById("amount").oninput = (e) => {
-                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                state.transferDraft.amount = e.target.value;
-            };
-            document.getElementById("msg").oninput = (e) => state.transferDraft.message = e.target.value.slice(0, 50);
-            document.getElementById("save").onchange = (e) => state.transferDraft.saveRecipient = e.target.value;
-            document.getElementById("alias").oninput = (e) => state.transferDraft.alias = e.target.value.slice(0, 25);
+  document.getElementById("from").onchange = (e) => state.transferDraft.fromAccountId = e.target.value;
+  document.getElementById("amount").oninput = (e) => {
+    e.target.value = e.target.value.replace(/\D/g,"").slice(0,10);
+    state.transferDraft.amount = e.target.value;
+  };
+  document.getElementById("msg").oninput = (e) => state.transferDraft.message = e.target.value.slice(0,50);
+  document.getElementById("save").onchange = (e) => state.transferDraft.saveRecipient = e.target.value;
+  document.getElementById("alias").oninput = (e) => state.transferDraft.alias = e.target.value.slice(0,25);
 
-            document.getElementById("next").onclick = () => {
-                const err = document.getElementById("err");
-                err.textContent = "";
+  setCTA([
+    { id:"ctaBack", label:"Volver", kind:"secondary", onClick: ()=> go("recipients") },
+    { id:"ctaContinue", label:"Continuar", kind:"primary", onClick: ()=>{
+        const err = document.getElementById("err");
+        err.textContent = "";
+        const amt = parseInt(state.transferDraft.amount || "0", 10);
+        if (!amt || amt <= 0) return (err.textContent = "Ingresa un monto válido.");
+        go("transfer-confirm");
+      }
+    }
+  ]);
+}
 
-                const amt = parseInt(state.transferDraft.amount || "0", 10);
-                if (!amt || amt <= 0) return (err.textContent = "Ingresa un monto válido.");
+/* Paso 3 de 3 */
+function renderTransferConfirm(){
+  setActiveNav("transfer");
 
-                go("transfer-confirm");
-            };
-        }
+  const rec = state.recipients.find(r=>r.id===state.selectedRecipientId);
+  const acc = state.accounts.find(a=>a.id===state.transferDraft.fromAccountId);
+  const amt = parseInt(state.transferDraft.amount,10);
 
-        function renderTransferConfirm() {
-            setActiveNav("transfer");
-            const rec = state.recipients.find(r => r.id === state.selectedRecipientId);
-            const acc = state.accounts.find(a => a.id === state.transferDraft.fromAccountId);
-            const amt = parseInt(state.transferDraft.amount, 10);
-
-            $view.innerHTML = `
+  $view.innerHTML = `
     <div class="card">
+      ${stepperHTML(3,3)}
       <h2>Confirmar simulación</h2>
-      <p>Revisa los datos. Esto no realiza una transferencia real.</p>
+      <p class="small">Revisa los datos. Esto no realiza una transferencia real.</p>
 
       <div class="divider"></div>
 
@@ -1009,7 +1019,7 @@
           <div class="title">Monto</div>
           <div class="meta">Monto simulado</div>
         </div>
-        <div class="amt">${moneyCLP(amt)}</div>
+        <div class="amt" style="font-size:1.4rem;">${moneyCLP(amt)}</div>
       </div>
 
       ${state.transferDraft.message ? `
@@ -1023,65 +1033,95 @@
       ` : ""}
 
       <div class="divider"></div>
-
-      <button class="btn" id="confirm">Confirmar (simular)</button>
-      <button class="btn secondary" id="edit" style="margin-top:10px;">Editar</button>
-      <p class="small" style="margin-top:10px;">Al confirmar, se registrará un movimiento ficticio para fines pedagógicos.</p>
+      <p class="small">Al confirmar, se agregará un movimiento ficticio para fines pedagógicos.</p>
     </div>
   `;
 
-            document.getElementById("edit").onclick = () => go("transfer-form");
-            document.getElementById("confirm").onclick = () => {
-                // Guardar alias si corresponde (simulado)
-                if (state.transferDraft.saveRecipient === "si" && state.transferDraft.alias.trim()) {
-                    rec.alias = state.transferDraft.alias.trim();
-                }
-
-                // Registrar movimiento ficticio
-                state.transactions.unshift({
-                    date: "hoy (simulado)",
-                    desc: `Transferencia simulada a ${rec.alias ? rec.alias : rec.name}`,
-                    amount: -amt
-                });
-
-                // Opcional: descontar saldo solo en simulación (si quieres)
-                acc.balance = Math.max(0, acc.balance - amt);
-
-                $view.innerHTML = `
-      <div class="banner"><b>Listo:</b> se completó una simulación. No hubo transferencia real.</div>
-      <div class="card">
-        <h2>Simulación confirmada</h2>
-        <p>Se agregó un movimiento ficticio para que puedas revisarlo en “Movimientos”.</p>
-        <button class="btn" id="goMov">Ver movimientos</button>
-        <button class="btn secondary" id="goHome" style="margin-top:10px;">Volver a Inicio</button>
-      </div>
-    `;
-                document.getElementById("goMov").onclick = () => go("movements");
-                document.getElementById("goHome").onclick = () => go("home");
-            };
+  setCTA([
+    { id:"ctaEdit", label:"Editar", kind:"secondary", onClick: ()=> go("transfer-form") },
+    { id:"ctaConfirm", label:"Confirmar", kind:"primary", onClick: ()=>{
+        // Guardar alias si corresponde (simulado)
+        if (state.transferDraft.saveRecipient === "si" && state.transferDraft.alias.trim()) {
+          rec.alias = state.transferDraft.alias.trim();
         }
 
-        function renderSecurity() {
-            setActiveNav("security");
-            $view.innerHTML = `
+        // Registrar movimiento ficticio
+        state.transactions.unshift({
+          date: "hoy (simulado)",
+          desc: `Transferencia simulada a ${rec.alias ? rec.alias : rec.name}`,
+          amount: -amt
+        });
+
+        // Descontar saldo en simulación (opcional)
+        acc.balance = Math.max(0, acc.balance - amt);
+
+        // Resultado
+        setCTA([]);
+        $view.innerHTML = `
+          <div class="banner"><b>Listo:</b> se completó una simulación. No hubo transferencia real.</div>
+          <div class="card">
+            <h2>Simulación confirmada</h2>
+            <p>Se agregó un movimiento ficticio para que puedas revisarlo en “Movimientos”.</p>
+          </div>
+        `;
+        setCTA([
+          { id:"ctaMov", label:"Ver movimientos", kind:"primary", onClick: ()=> go("movements") },
+          { id:"ctaHome", label:"Ir a Inicio", kind:"secondary", onClick: ()=> go("home") },
+        ]);
+      }
+    }
+  ]);
+}
+
+function renderSecurity(){
+  setActiveNav("security");
+  $view.innerHTML = `
     <div class="card">
       <h2>Seguridad (práctica)</h2>
-      <p>Aquí puedes enseñar conceptos como PIN, bloqueo, y recomendaciones de seguridad, sin tocar cuentas reales.</p>
+      <p>Sección para enseñar conceptos como PIN, cuidado con estafas, y confirmación de operaciones.</p>
+      <div class="divider"></div>
       <button class="btn secondary" id="logout">Cerrar sesión (simulada)</button>
     </div>
-  `;
-            document.getElementById("logout").onclick = () => {
-                state.authed = false;
-                go("login");
-            };
-        }
 
-        function renderMore() {
-            setActiveNav("more");
-            $view.innerHTML = `
+    <div class="card">
+      <h3>Consejo para la clase</h3>
+      <p class="small">Repetir siempre: “No compartas tu clave” y “verifica el destinatario antes de confirmar”.</p>
+    </div>
+  `;
+  document.getElementById("logout").onclick = () => {
+    state.authed = false;
+    closeSheet();
+    go("login");
+  };
+}
+
+function renderMore(){
+  setActiveNav("more");
+  $view.innerHTML = `
     <div class="card">
       <h2>Más</h2>
-      <p>Sección para ayuda, tutoriales, preguntas frecuentes y modo docente.</p>
+      <p class="small">Ajustes pensados para personas mayores.</p>
+
+      <div class="divider"></div>
+
+      <div class="item" style="align-items:center;">
+        <div>
+          <div class="title">Modo letra grande</div>
+          <div class="meta">Aumenta el tamaño de texto y controles</div>
+        </div>
+        <button class="btn secondary small" id="toggleBig">${state.accessibility.bigText ? "Activado" : "Desactivado"}</button>
+      </div>
+
+      <div class="item" style="align-items:center;">
+        <div>
+          <div class="title">Alto contraste</div>
+          <div class="meta">Mejora la legibilidad en pantallas difíciles</div>
+        </div>
+        <button class="btn secondary small" id="toggleHC">${state.accessibility.highContrast ? "Activado" : "Desactivado"}</button>
+      </div>
+
+      <div class="divider"></div>
+
       <div class="row">
         <button class="btn secondary" id="help">Ayuda</button>
         <button class="btn secondary" id="reset">Reiniciar simulación</button>
@@ -1090,53 +1130,94 @@
 
     <div class="card">
       <h3>Modo docente (idea)</h3>
-      <p class="small">Puedes agregar un “Panel docente” para cargar escenarios: saldo alto/bajo, errores típicos, destinatarios nuevos, etc.</p>
+      <p class="small">Puedes añadir escenarios: saldo bajo, destinatario incorrecto, confirmación doble, etc.</p>
     </div>
   `;
-            document.getElementById("help").onclick = () => alert("Ayuda: explica que todo es una simulación y guía el paso a paso.");
-            document.getElementById("reset").onclick = () => location.reload();
-        }
 
-        /** ======================
-         *  Navegación inferior
-         *  ====================== */
-        document.querySelectorAll(".nav button").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const key = btn.dataset.nav;
-                if (key === "home") go("home");
-                if (key === "transfer") go("transfer-menu");
-                if (key === "security") go("security");
-                if (key === "more") go("more");
-            });
-        });
+  document.getElementById("toggleBig").onclick = () => {
+    state.accessibility.bigText = !state.accessibility.bigText;
+    render();
+  };
+  document.getElementById("toggleHC").onclick = () => {
+    state.accessibility.highContrast = !state.accessibility.highContrast;
+    render();
+  };
+  document.getElementById("help").onclick = () => alert(
+    "Ayuda (simulador): Todo es ficticio. Practica: Transferir > elegir destinatario > ingresar monto > confirmar."
+  );
+  document.getElementById("reset").onclick = () => location.reload();
+}
 
-        /** =========
-         *  Utilidades
-         *  ========= */
-        function groupBy(arr, fn) {
-            return arr.reduce((acc, item) => {
-                const k = fn(item);
-                (acc[k] ||= []).push(item);
-                return acc;
-            }, {});
-        }
-        function escapeHtml(s) {
-            return String(s ?? "").replace(/[&<>"']/g, (c) => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-            }[c]));
-        }
-        function tickClock() {
-            const d = new Date();
-            const hh = String(d.getHours()).padStart(2, "0");
-            const mm = String(d.getMinutes()).padStart(2, "0");
-            document.getElementById("clock").textContent = `${hh}:${mm}`;
-        }
-        setInterval(tickClock, 1000);
-        tickClock();
+/* Stepper */
+function stepperHTML(step, total){
+  const pct = Math.round((step/total)*100);
+  return `
+    <div class="stepper">
+      <div class="step">Paso ${step} de ${total}</div>
+      <div class="progress" aria-label="progreso">
+        <div class="bar" style="width:${pct}%"></div>
+      </div>
+    </div>
+  `;
+}
 
-        /** Arranque */
-        go("disclaimer");
-    </script>
+/* ======================
+   Navbar inferior
+   ====================== */
+document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.nav;
+    if (key === "home") go("home");
+    if (key === "transfer") openSheet();
+    if (key === "security") go("security");
+    if (key === "more") go("more");
+  });
+});
+
+/* ======================
+   Bottom sheet Transferir
+   ====================== */
+const $overlay = document.getElementById("overlay");
+const $sheet = document.getElementById("sheet");
+
+function openSheet(){
+  if (!state.authed) return;
+  setActiveNav("transfer");
+  $overlay.classList.add("open");
+  $sheet.classList.add("open");
+}
+
+function closeSheet(){
+  $sheet.classList.remove("open");
+  $overlay.classList.remove("open");
+}
+
+$overlay.addEventListener("click", closeSheet);
+document.getElementById("sheetClose").onclick = closeSheet;
+
+document.getElementById("sheetThird").onclick = () => {
+  closeSheet();
+  go("recipients");
+};
+document.getElementById("sheetBetween").onclick = () => {
+  closeSheet();
+  alert("Entre mis cuentas (simulado): puedes implementarlo como segundo flujo.");
+};
+
+/* ======================
+   Reloj
+   ====================== */
+function tickClock(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  document.getElementById("clock").textContent = `${hh}:${mm}`;
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+/* Arranque */
+go("disclaimer");
+</script>
 </body>
-
 </html>
