@@ -343,6 +343,111 @@
         .hidden {
             display: none
         }
+
+        /* -------- Look más "banca-app moderna" -------- */
+
+        .card {
+            background: var(--card);
+            border-radius: 22px;
+            box-shadow: 0 16px 34px rgba(2, 6, 23, .10);
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(2, 6, 23, .05);
+        }
+
+        .btn {
+            width: 100%;
+            border: 0;
+            border-radius: 999px;
+            padding: 18px 18px;
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 12px 22px rgba(2, 6, 23, .14);
+            transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
+        }
+
+        .btn:hover {
+            filter: brightness(1.02);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 7px 14px rgba(2, 6, 23, .12);
+        }
+
+        .btn.secondary {
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid rgba(30, 64, 175, .18);
+            box-shadow: 0 12px 22px rgba(2, 6, 23, .06);
+        }
+
+        .btn.small {
+            width: auto;
+            padding: 10px 14px;
+            font-size: 14px;
+            border-radius: 999px;
+        }
+
+        /* Segmentado tipo "Movimientos / Cartolas" */
+        .segment {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .segbtn {
+            flex: 1;
+            border-radius: 999px;
+            padding: 13px 12px;
+            font-weight: 900;
+            border: 1px solid rgba(2, 6, 23, .10);
+            background: #fff;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .segbtn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 12px 22px rgba(2, 6, 23, .12);
+        }
+
+        /* Tarjeta de cuenta más protagonista */
+        .account-card {
+            padding: 20px;
+        }
+
+        .account-card .amt {
+            font-size: 38px;
+            letter-spacing: -0.8px;
+        }
+
+        .account-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .account-meta .small {
+            opacity: .95
+        }
+
+        /* Banner modo práctica más “app” */
+        .banner {
+            background: #fff7ed;
+            border: 1px solid rgba(234, 88, 12, .20);
+            color: #9a3412;
+            padding: 12px 12px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.25rem;
+        }
     </style>
 </head>
 
@@ -502,20 +607,27 @@
 
         function renderLogin() {
             $view.innerHTML = `
+    <div class="banner">
+      <b>Modo práctica:</b> simulador educativo. No es un banco real y no realiza operaciones.
+    </div>
+
     <div class="card">
-      <h1>Hola</h1>
-      <p><b>${state.userName}</b></p>
-      <p class="small">Acceso solo de práctica. No es una app oficial.</p>
-      <div class="divider"></div>
+      <h1 style="margin-bottom:6px;">Hola</h1>
+      <div style="font-weight:900;font-size:20px;margin-bottom:6px;">${state.userName}</div>
+      <p class="small">Acceso de demostración para aprender la mecánica de una app bancaria.</p>
+
+      <div style="height:12px;"></div>
+
       <button class="btn" id="enter">Ingresar al simulador</button>
-      <div style="text-align:center;">
+
+      <div style="text-align:center;margin-top:10px;">
         <a class="link" id="about">¿Qué es este simulador?</a>
       </div>
     </div>
 
     <div class="card hidden" id="aboutCard">
       <h2>¿Qué es?</h2>
-      <p>Es una app de entrenamiento para personas mayores. Todo lo que ves (saldo, movimientos, transferencias) es ficticio.</p>
+      <p>Todo es ficticio (saldos, movimientos y transferencias). No ingreses datos reales.</p>
       <button class="btn secondary" id="closeAbout">Cerrar</button>
     </div>
   `;
@@ -523,6 +635,7 @@
             document.getElementById("about").onclick = () => document.getElementById("aboutCard").classList.toggle("hidden");
             document.getElementById("closeAbout").onclick = () => document.getElementById("aboutCard").classList.add("hidden");
         }
+
 
         function renderPin() {
             $view.innerHTML = `
@@ -590,27 +703,31 @@
             $view.innerHTML = `
     <div class="banner"><b>Simulador educativo:</b> no hay dinero real, no hay transferencias reales.</div>
 
-    <div class="card">
-      <h2>${mainAcc.name}</h2>
-      <p class="small">N° ${mainAcc.number}</p>
-      <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;">
-        <div class="amt">${moneyCLP(mainAcc.balance)}</div>
+    <div class="card account-card">
+      <h2 style="margin-bottom:4px;">${mainAcc.name}</h2>
+
+      <div class="account-meta">
+        <div class="small">N° ${mainAcc.number}</div>
         <div class="small">Saldo disponible</div>
       </div>
 
-      <div class="row" style="margin-top:12px;">
-        <button class="btn" id="goMov">Movimientos</button>
-        <button class="btn secondary" id="goDocs">Documentos</button>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px;">
+        <div class="amt">${moneyCLP(mainAcc.balance)}</div>
+      </div>
+
+      <div class="segment">
+        <button class="segbtn active" id="goMov">Movimientos</button>
+        <button class="segbtn" id="goDocs">Documentos</button>
       </div>
     </div>
 
     <div class="card">
       <h2>Accesos rápidos</h2>
-      <div class="row">
+      <div class="row" style="margin-top:10px;">
         <button class="btn secondary" id="quickTransfer">Transferir</button>
         <button class="btn secondary" id="quickRecipients">Destinatarios</button>
       </div>
-      <p class="small" style="margin-top:10px;">Sugerencia: primero revisa movimientos, luego simula una transferencia.</p>
+      <p class="small" style="margin-top:10px;">Sugerencia: revisa movimientos y luego simula una transferencia.</p>
     </div>
   `;
 
@@ -619,6 +736,7 @@
             document.getElementById("quickTransfer").onclick = () => go("transfer-menu");
             document.getElementById("quickRecipients").onclick = () => go("recipients");
         }
+
 
         function renderMovements() {
             setActiveNav("home");
