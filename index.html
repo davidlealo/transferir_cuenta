@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulador de Banca (Educativo)</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#1e40af;
+      --primary-2:#1d4ed8;
+      --danger:#dc2626;
+      --ok:#16a34a;
+      --shadow: 0 10px 25px rgba(2,6,23,.08);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: linear-gradient(180deg, #fff, var(--bg));
+      color:var(--text);
+    }
+    .app{
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+      background: var(--bg);
+    }
+    .status{
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      border-bottom: 1px solid rgba(2,6,23,.06);
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      background:#eef2ff;
+      color:#3730a3;
+      font-weight:600;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .pill b{font-weight:800}
+    .topbar{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:#fff;
+      border-bottom: 1px solid rgba(2,6,23,.06);
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand .name{font-weight:800}
+    .brand .sub{font-size:12px;color:var(--muted)}
+    .content{
+      flex:1;
+      padding: 16px;
+      padding-bottom: 90px;
+    }
+    .card{
+      background:var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .banner{
+      background:#fffbeb;
+      border:1px solid #fde68a;
+      color:#92400e;
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      line-height:1.25rem;
+      margin-bottom: 12px;
+    }
+    h1,h2,h3{margin:0 0 8px}
+    h1{font-size:24px}
+    h2{font-size:18px}
+    p{margin:0 0 10px;color:var(--muted);line-height:1.35rem}
+    .btn{
+      width:100%;
+      border:0;
+      border-radius: 999px;
+      padding: 14px 14px;
+      font-weight:800;
+      font-size:16px;
+      cursor:pointer;
+      background: var(--primary);
+      color:#fff;
+      transition: transform .02s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.secondary{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid rgba(30,64,175,.25);
+    }
+    .btn.ghost{
+      background: transparent;
+      color: var(--primary);
+      border:1px dashed rgba(30,64,175,.35);
+    }
+    .row{display:flex; gap:10px}
+    .row .btn{flex:1}
+    .link{
+      color:var(--primary-2);
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+      display:inline-block;
+      margin-top:6px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-bottom: 10px;
+    }
+    label{font-size:13px;color:var(--muted);font-weight:700}
+    input, select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(2,6,23,.12);
+      outline:none;
+      font-size:16px;
+      background:#fff;
+    }
+    input:focus, select:focus{border-color: rgba(30,64,175,.55)}
+    .pin{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin: 12px 0 8px;
+    }
+    .pin input{
+      width:56px;
+      text-align:center;
+      font-size:22px;
+      font-weight:900;
+    }
+    .tabs{
+      display:flex; gap:10px; margin: 10px 0 8px;
+    }
+    .tab{
+      flex:1;
+      text-align:center;
+      padding:10px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(2,6,23,.10);
+      background:#fff;
+      color:var(--muted);
+      font-weight:800;
+      cursor:pointer;
+    }
+    .tab.active{
+      background:#e0e7ff;
+      color:#312e81;
+      border-color: rgba(49,46,129,.2);
+    }
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding: 12px;
+      border-radius: 14px;
+      border:1px solid rgba(2,6,23,.08);
+      background:#fff;
+    }
+    .item .title{font-weight:900}
+    .item .meta{font-size:13px;color:var(--muted);line-height:1.1rem}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      background:#eef2ff;
+      color:#3730a3;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .amt{
+      font-weight:900;
+      font-size:18px;
+    }
+    .amt.pos{color:var(--ok)}
+    .amt.neg{color:var(--danger)}
+    .nav{
+      position: fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(420px, 100%);
+      background:#fff;
+      border-top: 1px solid rgba(2,6,23,.08);
+      display:flex;
+      justify-content:space-around;
+      padding: 10px 8px;
+    }
+    .nav button{
+      border:0;background:transparent;cursor:pointer;
+      font-weight:800;color:var(--muted);
+      display:flex;flex-direction:column;gap:4px;align-items:center;
+      font-size:12px;
+      padding: 6px 8px;
+      border-radius: 12px;
+    }
+    .nav button.active{color:var(--primary)}
+    .small{font-size:12px;color:var(--muted)}
+    .divider{height:1px;background:rgba(2,6,23,.08);margin:10px 0}
+    .hidden{display:none}
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="status">
+      <div class="pill"><b>Modo práctica</b> Simulador educativo</div>
+      <div class="small" id="clock"></div>
+    </div>
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="name">Banca Escuela</div>
+        <div class="sub">Aplicación de aprendizaje (no oficial)</div>
+      </div>
+      <div class="small" id="userChip"></div>
+    </div>
+
+    <div class="content" id="view"></div>
+
+    <div class="nav" id="nav" class="hidden">
+      <button data-nav="home" id="navHome">Inicio</button>
+      <button data-nav="transfer" id="navTransfer">Transferir</button>
+      <button data-nav="security" id="navSecurity">Seguridad</button>
+      <button data-nav="more" id="navMore">Más</button>
+    </div>
+  </div>
+
+<script>
+/** =========================
+ *  Estado (simulación local)
+ *  ========================= */
+const state = {
+  acceptedDisclaimer: false,
+  userName: "David (perfil de práctica)",
+  pinSet: true,        // si quieres obligar a "crear PIN", pon false y adapta texto
+  authed: false,
+  pin: "1234",         // PIN de práctica
+  activeTab: "guardados",
+  accounts: [
+    { id:"acc1", name:"Cuenta Principal", number:"00023160749", balance: 2225 },
+    { id:"acc2", name:"Cuenta Pro", number:"37870206438", balance: 0 },
+  ],
+  transactions: [
+    { date:"viernes, 12 de diciembre de 2025", desc:"Pago Yanjlia", amount:-3300 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Pago Portal Ñuñoa", amount:-12200 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia recibida", amount:6100 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia enviada", amount:-4350 },
+    { date:"viernes, 5 de diciembre de 2025", desc:"Transferencia enviada", amount:-1945 },
+  ],
+  recipients: [
+    { id:"r1", name:"Alejandra Leal", bank:"Banco Demo", account:"Cuenta Demo 14598034", alias:"" },
+    { id:"r2", name:"Alejandra Olivares Valdés", bank:"Banco Demo", account:"Cuenta Demo 9708677", alias:"Mamá" },
+    { id:"r3", name:"Ana María Salgado Vargas", bank:"Banco Demo", account:"Cuenta Demo 65148250", alias:"Anita" },
+    { id:"r4", name:"Flavio Emilio González", bank:"Banco Demo", account:"Cuenta Demo 0017597579", alias:"" },
+  ],
+  draftRecipientId: "",
+  selectedRecipientId: "r4",
+  transferDraft: {
+    fromAccountId: "acc2",
+    amount: "",
+    message: "",
+    saveRecipient: "no",
+    alias: ""
+  }
+};
+
+const $view = document.getElementById("view");
+const $nav = document.getElementById("nav");
+const $userChip = document.getElementById("userChip");
+
+function moneyCLP(n){
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(n);
+  // 2225 -> 2.225
+  return sign + "$" + abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function setActiveNav(key){
+  for (const id of ["navHome","navTransfer","navSecurity","navMore"]) {
+    document.getElementById(id).classList.remove("active");
+  }
+  if (key === "home") document.getElementById("navHome").classList.add("active");
+  if (key === "transfer") document.getElementById("navTransfer").classList.add("active");
+  if (key === "security") document.getElementById("navSecurity").classList.add("active");
+  if (key === "more") document.getElementById("navMore").classList.add("active");
+}
+
+/** ==============
+ *  Ruteo simple
+ *  ============== */
+let currentRoute = "disclaimer";
+function go(route){
+  currentRoute = route;
+  render();
+}
+
+function render(){
+  // Chip usuario
+  $userChip.textContent = state.authed ? state.userName : "";
+
+  // Nav visible solo si está autenticado
+  $nav.style.display = state.authed ? "flex" : "none";
+
+  // Render por ruta
+  if (!state.acceptedDisclaimer) return renderDisclaimer();
+  if (!state.authed) return renderLogin();
+
+  switch(currentRoute){
+    case "home": return renderHome();
+    case "pin": return renderPin();
+    case "movements": return renderMovements();
+    case "transfer-menu": return renderTransferMenu();
+    case "recipients": return renderRecipients();
+    case "new-recipient": return renderNewRecipient();
+    case "transfer-form": return renderTransferForm();
+    case "transfer-confirm": return renderTransferConfirm();
+    case "security": return renderSecurity();
+    case "more": return renderMore();
+    default: return renderHome();
+  }
+}
+
+/** =======================
+ *  Vistas (pantallas)
+ *  ======================= */
+function renderDisclaimer(){
+  $view.innerHTML = `
+    <div class="banner">
+      <b>Importante:</b> Esto es un simulador educativo. No pertenece a ninguna institución financiera
+      y no realiza operaciones reales. No ingreses datos bancarios reales.
+    </div>
+
+    <div class="card">
+      <h1>Simulador de banca</h1>
+      <p>Úsalo para aprender paso a paso cómo funciona una app bancaria: revisar saldo, ver movimientos y simular transferencias.</p>
+      <div class="divider"></div>
+      <button class="btn" id="accept">Entiendo y continuar</button>
+      <button class="btn secondary" id="exit" style="margin-top:10px;">Salir</button>
+    </div>
+  `;
+  document.getElementById("accept").onclick = () => {
+    state.acceptedDisclaimer = true;
+    go("login");
+  };
+  document.getElementById("exit").onclick = () => {
+    // En web, "salir" puede ocultar contenido
+    $view.innerHTML = `<div class="card"><h2>Sesión finalizada</h2><p>Puedes cerrar esta pestaña.</p></div>`;
+  };
+}
+
+function renderLogin(){
+  $view.innerHTML = `
+    <div class="card">
+      <h1>Hola</h1>
+      <p><b>${state.userName}</b></p>
+      <p class="small">Acceso solo de práctica. No es una app oficial.</p>
+      <div class="divider"></div>
+      <button class="btn" id="enter">Ingresar al simulador</button>
+      <div style="text-align:center;">
+        <a class="link" id="about">¿Qué es este simulador?</a>
+      </div>
+    </div>
+
+    <div class="card hidden" id="aboutCard">
+      <h2>¿Qué es?</h2>
+      <p>Es una app de entrenamiento para personas mayores. Todo lo que ves (saldo, movimientos, transferencias) es ficticio.</p>
+      <button class="btn secondary" id="closeAbout">Cerrar</button>
+    </div>
+  `;
+  document.getElementById("enter").onclick = () => go("pin");
+  document.getElementById("about").onclick = () => document.getElementById("aboutCard").classList.toggle("hidden");
+  document.getElementById("closeAbout").onclick = () => document.getElementById("aboutCard").classList.add("hidden");
+}
+
+function renderPin(){
+  $view.innerHTML = `
+    <div class="banner"><b>Modo práctica:</b> Usa una clave inventada. No corresponde a tu banco.</div>
+
+    <div class="card">
+      <h2>${state.pinSet ? "Ingresa tu clave de práctica" : "Crea tu clave de práctica"}</h2>
+      <p>Ingresa 4 dígitos.</p>
+
+      <div class="pin">
+        <input inputmode="numeric" maxlength="1" id="p1" aria-label="dígito 1">
+        <input inputmode="numeric" maxlength="1" id="p2" aria-label="dígito 2">
+        <input inputmode="numeric" maxlength="1" id="p3" aria-label="dígito 3">
+        <input inputmode="numeric" maxlength="1" id="p4" aria-label="dígito 4">
+      </div>
+
+      <button class="btn" id="pinOk">Aceptar</button>
+      <div style="text-align:center;">
+        <a class="link" id="pinHelp">¿Problemas con tu clave?</a>
+      </div>
+      <p class="small hidden" id="pinMsg" style="margin-top:8px;"></p>
+    </div>
+  `;
+
+  const inputs = ["p1","p2","p3","p4"].map(id => document.getElementById(id));
+  inputs[0].focus();
+
+  inputs.forEach((inp, idx) => {
+    inp.addEventListener("input", () => {
+      inp.value = (inp.value || "").replace(/\D/g,"").slice(0,1);
+      if (inp.value && idx < inputs.length-1) inputs[idx+1].focus();
+    });
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !inp.value && idx>0) inputs[idx-1].focus();
+    });
+  });
+
+  document.getElementById("pinHelp").onclick = () => {
+    const msg = document.getElementById("pinMsg");
+    msg.classList.remove("hidden");
+    msg.textContent = "En modo práctica puedes usar 1234 (PIN de ejemplo) o inventar uno si el docente lo indica.";
+  };
+
+  document.getElementById("pinOk").onclick = () => {
+    const entered = inputs.map(i=>i.value).join("");
+    if (entered.length !== 4) return showPinError("Ingresa los 4 dígitos.");
+    if (state.pinSet && entered !== state.pin) return showPinError("Clave incorrecta (modo práctica). Prueba 1234.");
+    // Auth ok
+    state.authed = true;
+    go("home");
+  };
+
+  function showPinError(text){
+    const msg = document.getElementById("pinMsg");
+    msg.classList.remove("hidden");
+    msg.style.color = "#b91c1c";
+    msg.textContent = text;
+  }
+}
+
+function renderHome(){
+  setActiveNav("home");
+
+  const mainAcc = state.accounts[0];
+  $view.innerHTML = `
+    <div class="banner"><b>Simulador educativo:</b> no hay dinero real, no hay transferencias reales.</div>
+
+    <div class="card">
+      <h2>${mainAcc.name}</h2>
+      <p class="small">N° ${mainAcc.number}</p>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;">
+        <div class="amt">${moneyCLP(mainAcc.balance)}</div>
+        <div class="small">Saldo disponible</div>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <button class="btn" id="goMov">Movimientos</button>
+        <button class="btn secondary" id="goDocs">Documentos</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Accesos rápidos</h2>
+      <div class="row">
+        <button class="btn secondary" id="quickTransfer">Transferir</button>
+        <button class="btn secondary" id="quickRecipients">Destinatarios</button>
+      </div>
+      <p class="small" style="margin-top:10px;">Sugerencia: primero revisa movimientos, luego simula una transferencia.</p>
+    </div>
+  `;
+
+  document.getElementById("goMov").onclick = () => go("movements");
+  document.getElementById("goDocs").onclick = () => alert("Documentos (simulado): aquí podrías mostrar PDFs de ejemplo.");
+  document.getElementById("quickTransfer").onclick = () => go("transfer-menu");
+  document.getElementById("quickRecipients").onclick = () => go("recipients");
+}
+
+function renderMovements(){
+  setActiveNav("home");
+
+  const groups = groupBy(state.transactions, t => t.date);
+  const htmlGroups = Object.entries(groups).map(([date, items]) => {
+    const li = items.map(t => `
+      <div class="item">
+        <div>
+          <div class="title">${escapeHtml(t.desc)}</div>
+          <div class="meta">${date}</div>
+        </div>
+        <div class="amt ${t.amount>=0 ? "pos":"neg"}">${moneyCLP(t.amount)}</div>
+      </div>
+    `).join("");
+    return `<h3 style="margin:16px 0 8px;">${escapeHtml(date)}</h3><div class="list">${li}</div>`;
+  }).join("");
+
+  $view.innerHTML = `
+    <div class="card">
+      <h2>Saldos y movimientos</h2>
+      <p class="small">Ejemplo de lista de movimientos (ficticios).</p>
+      <button class="btn secondary" id="backHome">Volver a Inicio</button>
+    </div>
+    ${htmlGroups}
+  `;
+  document.getElementById("backHome").onclick = () => go("home");
+}
+
+function renderTransferMenu(){
+  setActiveNav("transfer");
+
+  $view.innerHTML = `
+    <div class="banner"><b>Recordatorio:</b> esta transferencia será una simulación.</div>
+
+    <div class="card">
+      <h2>Transferir</h2>
+      <button class="btn" id="toThird">A terceros</button>
+      <button class="btn secondary" id="between" style="margin-top:10px;">Entre mis cuentas</button>
+    </div>
+  `;
+  document.getElementById("toThird").onclick = () => go("recipients");
+  document.getElementById("between").onclick = () => alert("Entre mis cuentas (simulado): puedes implementarlo como un segundo flujo.");
+}
+
+function renderRecipients(){
+  setActiveNav("transfer");
+
+  const filtered = state.recipients; // aquí puedes filtrar por tabs y búsqueda
+  const list = filtered.map(r => `
+    <div class="item">
+      <div>
+        <div class="title">${escapeHtml(r.alias ? `${r.alias} — ${r.name}` : r.name)}</div>
+        <div class="meta">${escapeHtml(r.bank)} · ${escapeHtml(r.account)}</div>
+      </div>
+      <button class="btn secondary" style="width:auto;padding:10px 14px;" data-pick="${r.id}">Elegir</button>
+    </div>
+  `).join("");
+
+  $view.innerHTML = `
+    <div class="card">
+      <h2>¿A quién quieres transferir?</h2>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn" id="newR">Nuevo destinatario</button>
+        <button class="btn secondary" id="myAcc">Entre mis cuentas</button>
+      </div>
+
+      <div class="field" style="margin-top:12px;">
+        <label>Buscar por nombre, alias o ID (práctica)</label>
+        <input id="q" placeholder="Ej: Alejandra, Mamá, r1..." />
+      </div>
+
+      <div class="tabs">
+        <button class="tab ${state.activeTab==="favoritos"?"active":""}" data-tab="favoritos">Favoritos</button>
+        <button class="tab ${state.activeTab==="guardados"?"active":""}" data-tab="guardados">Guardados</button>
+        <button class="tab ${state.activeTab==="contactos"?"active":""}" data-tab="contactos">Contactos</button>
+      </div>
+    </div>
+
+    <div class="list" id="recList">${list}</div>
+  `;
+
+  document.querySelectorAll(".tab").forEach(btn=>{
+    btn.onclick = () => { state.activeTab = btn.dataset.tab; renderRecipients(); };
+  });
+
+  const q = document.getElementById("q");
+  q.addEventListener("input", () => {
+    const term = q.value.trim().toLowerCase();
+    const res = state.recipients.filter(r => {
+      const hay = `${r.id} ${r.name} ${r.alias} ${r.bank} ${r.account}`.toLowerCase();
+      return hay.includes(term);
+    });
+    document.getElementById("recList").innerHTML = res.map(r => `
+      <div class="item">
+        <div>
+          <div class="title">${escapeHtml(r.alias ? `${r.alias} — ${r.name}` : r.name)}</div>
+          <div class="meta">${escapeHtml(r.bank)} · ${escapeHtml(r.account)}</div>
+        </div>
+        <button class="btn secondary" style="width:auto;padding:10px 14px;" data-pick="${r.id}">Elegir</button>
+      </div>
+    `).join("");
+    wirePickButtons();
+  });
+
+  document.getElementById("newR").onclick = () => go("new-recipient");
+  document.getElementById("myAcc").onclick = () => alert("Entre mis cuentas (simulado).");
+
+  wirePickButtons();
+
+  function wirePickButtons(){
+    document.querySelectorAll("[data-pick]").forEach(b=>{
+      b.onclick = () => {
+        state.selectedRecipientId = b.dataset.pick;
+        // defaults de borrador
+        state.transferDraft.amount = "";
+        state.transferDraft.message = "";
+        state.transferDraft.saveRecipient = "no";
+        state.transferDraft.alias = "";
+        go("transfer-form");
+      };
+    });
+  }
+}
+
+function renderNewRecipient(){
+  setActiveNav("transfer");
+  $view.innerHTML = `
+    <div class="card">
+      <h2>Nuevo destinatario</h2>
+      <p>Ingresa un identificador de práctica. Ejemplo: 12.345.678-9 (solo demostración).</p>
+
+      <div class="field">
+        <label>Documento / ID (práctica)</label>
+        <input id="doc" placeholder="Ej: 12.345.678-9" />
+      </div>
+
+      <button class="btn" id="cont">Continuar</button>
+      <button class="btn secondary" id="back" style="margin-top:10px;">Volver</button>
+      <p class="small" id="msg" style="margin-top:10px;"></p>
+    </div>
+  `;
+  document.getElementById("back").onclick = () => go("recipients");
+  document.getElementById("cont").onclick = () => {
+    const v = document.getElementById("doc").value.trim();
+    if (!v) return (document.getElementById("msg").textContent = "Ingresa un ID para continuar.");
+    // Crea destinatario ficticio
+    const id = "r" + (state.recipients.length + 1);
+    state.recipients.unshift({
+      id,
+      name: "Destinatario de práctica",
+      bank: "Banco Demo",
+      account: `Cuenta Demo ${Math.floor(10000000 + Math.random()*90000000)}`,
+      alias: ""
+    });
+    state.selectedRecipientId = id;
+    go("transfer-form");
+  };
+}
+
+function renderTransferForm(){
+  setActiveNav("transfer");
+
+  const rec = state.recipients.find(r=>r.id===state.selectedRecipientId);
+  const accOptions = state.accounts.map(a => `
+    <option value="${a.id}" ${a.id===state.transferDraft.fromAccountId ? "selected":""}>
+      ${a.name} (${moneyCLP(a.balance)})
+    </option>
+  `).join("");
+
+  $view.innerHTML = `
+    <div class="banner"><b>Simulación:</b> al confirmar no se enviará dinero real.</div>
+
+    <div class="card">
+      <h2>Transferir</h2>
+
+      <div class="field">
+        <label>Cuenta de origen</label>
+        <select id="from">${accOptions}</select>
+      </div>
+
+      <div class="card" style="box-shadow:none;border:1px solid rgba(2,6,23,.08);">
+        <div class="title">${escapeHtml(rec.alias ? `${rec.alias} — ${rec.name}` : rec.name)}</div>
+        <div class="meta">${escapeHtml(rec.bank)} · ${escapeHtml(rec.account)}</div>
+      </div>
+
+      <div class="field" style="margin-top:10px;">
+        <label>Ingresa un monto (simulado)</label>
+        <input id="amount" inputmode="numeric" placeholder="Ej: 5000" value="${escapeHtml(state.transferDraft.amount)}" />
+      </div>
+
+      <div class="field">
+        <label>Incluir mensaje (opcional)</label>
+        <input id="msg" placeholder="Ej: Almuerzo" value="${escapeHtml(state.transferDraft.message)}" maxlength="50" />
+        <div class="small">Máximo 50 caracteres</div>
+      </div>
+
+      <div class="field">
+        <label>¿Guardar este destinatario?</label>
+        <select id="save">
+          <option value="si" ${state.transferDraft.saveRecipient==="si"?"selected":""}>Sí</option>
+          <option value="no" ${state.transferDraft.saveRecipient==="no"?"selected":""}>No</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Alias (opcional)</label>
+        <input id="alias" placeholder="Ej: Vecina" value="${escapeHtml(state.transferDraft.alias)}" maxlength="25" />
+      </div>
+
+      <button class="btn" id="next">Continuar</button>
+      <button class="btn secondary" id="back" style="margin-top:10px;">Volver</button>
+
+      <p class="small" id="err" style="margin-top:10px;color:#b91c1c;"></p>
+    </div>
+  `;
+
+  document.getElementById("back").onclick = () => go("recipients");
+  document.getElementById("from").onchange = (e) => state.transferDraft.fromAccountId = e.target.value;
+  document.getElementById("amount").oninput = (e) => {
+    e.target.value = e.target.value.replace(/\D/g,"").slice(0,10);
+    state.transferDraft.amount = e.target.value;
+  };
+  document.getElementById("msg").oninput = (e) => state.transferDraft.message = e.target.value.slice(0,50);
+  document.getElementById("save").onchange = (e) => state.transferDraft.saveRecipient = e.target.value;
+  document.getElementById("alias").oninput = (e) => state.transferDraft.alias = e.target.value.slice(0,25);
+
+  document.getElementById("next").onclick = () => {
+    const err = document.getElementById("err");
+    err.textContent = "";
+
+    const amt = parseInt(state.transferDraft.amount || "0", 10);
+    if (!amt || amt <= 0) return (err.textContent = "Ingresa un monto válido.");
+
+    go("transfer-confirm");
+  };
+}
+
+function renderTransferConfirm(){
+  setActiveNav("transfer");
+  const rec = state.recipients.find(r=>r.id===state.selectedRecipientId);
+  const acc = state.accounts.find(a=>a.id===state.transferDraft.fromAccountId);
+  const amt = parseInt(state.transferDraft.amount,10);
+
+  $view.innerHTML = `
+    <div class="card">
+      <h2>Confirmar simulación</h2>
+      <p>Revisa los datos. Esto no realiza una transferencia real.</p>
+
+      <div class="divider"></div>
+
+      <div class="item">
+        <div>
+          <div class="title">Desde</div>
+          <div class="meta">${escapeHtml(acc.name)} · Saldo ${moneyCLP(acc.balance)}</div>
+        </div>
+        <span class="badge">Cuenta</span>
+      </div>
+
+      <div class="item">
+        <div>
+          <div class="title">Hacia</div>
+          <div class="meta">${escapeHtml(rec.name)} · ${escapeHtml(rec.bank)}</div>
+        </div>
+        <span class="badge">Destinatario</span>
+      </div>
+
+      <div class="item">
+        <div>
+          <div class="title">Monto</div>
+          <div class="meta">Monto simulado</div>
+        </div>
+        <div class="amt">${moneyCLP(amt)}</div>
+      </div>
+
+      ${state.transferDraft.message ? `
+        <div class="item">
+          <div>
+            <div class="title">Mensaje</div>
+            <div class="meta">${escapeHtml(state.transferDraft.message)}</div>
+          </div>
+          <span class="badge">Opcional</span>
+        </div>
+      ` : ""}
+
+      <div class="divider"></div>
+
+      <button class="btn" id="confirm">Confirmar (simular)</button>
+      <button class="btn secondary" id="edit" style="margin-top:10px;">Editar</button>
+      <p class="small" style="margin-top:10px;">Al confirmar, se registrará un movimiento ficticio para fines pedagógicos.</p>
+    </div>
+  `;
+
+  document.getElementById("edit").onclick = () => go("transfer-form");
+  document.getElementById("confirm").onclick = () => {
+    // Guardar alias si corresponde (simulado)
+    if (state.transferDraft.saveRecipient === "si" && state.transferDraft.alias.trim()) {
+      rec.alias = state.transferDraft.alias.trim();
+    }
+
+    // Registrar movimiento ficticio
+    state.transactions.unshift({
+      date: "hoy (simulado)",
+      desc: `Transferencia simulada a ${rec.alias ? rec.alias : rec.name}`,
+      amount: -amt
+    });
+
+    // Opcional: descontar saldo solo en simulación (si quieres)
+    acc.balance = Math.max(0, acc.balance - amt);
+
+    $view.innerHTML = `
+      <div class="banner"><b>Listo:</b> se completó una simulación. No hubo transferencia real.</div>
+      <div class="card">
+        <h2>Simulación confirmada</h2>
+        <p>Se agregó un movimiento ficticio para que puedas revisarlo en “Movimientos”.</p>
+        <button class="btn" id="goMov">Ver movimientos</button>
+        <button class="btn secondary" id="goHome" style="margin-top:10px;">Volver a Inicio</button>
+      </div>
+    `;
+    document.getElementById("goMov").onclick = () => go("movements");
+    document.getElementById("goHome").onclick = () => go("home");
+  };
+}
+
+function renderSecurity(){
+  setActiveNav("security");
+  $view.innerHTML = `
+    <div class="card">
+      <h2>Seguridad (práctica)</h2>
+      <p>Aquí puedes enseñar conceptos como PIN, bloqueo, y recomendaciones de seguridad, sin tocar cuentas reales.</p>
+      <button class="btn secondary" id="logout">Cerrar sesión (simulada)</button>
+    </div>
+  `;
+  document.getElementById("logout").onclick = () => {
+    state.authed = false;
+    go("login");
+  };
+}
+
+function renderMore(){
+  setActiveNav("more");
+  $view.innerHTML = `
+    <div class="card">
+      <h2>Más</h2>
+      <p>Sección para ayuda, tutoriales, preguntas frecuentes y modo docente.</p>
+      <div class="row">
+        <button class="btn secondary" id="help">Ayuda</button>
+        <button class="btn secondary" id="reset">Reiniciar simulación</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Modo docente (idea)</h3>
+      <p class="small">Puedes agregar un “Panel docente” para cargar escenarios: saldo alto/bajo, errores típicos, destinatarios nuevos, etc.</p>
+    </div>
+  `;
+  document.getElementById("help").onclick = () => alert("Ayuda: explica que todo es una simulación y guía el paso a paso.");
+  document.getElementById("reset").onclick = () => location.reload();
+}
+
+/** ======================
+ *  Navegación inferior
+ *  ====================== */
+document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.nav;
+    if (key === "home") go("home");
+    if (key === "transfer") go("transfer-menu");
+    if (key === "security") go("security");
+    if (key === "more") go("more");
+  });
+});
+
+/** =========
+ *  Utilidades
+ *  ========= */
+function groupBy(arr, fn){
+  return arr.reduce((acc, item)=>{
+    const k = fn(item);
+    (acc[k] ||= []).push(item);
+    return acc;
+  }, {});
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function tickClock(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  document.getElementById("clock").textContent = `${hh}:${mm}`;
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+/** Arranque */
+go("disclaimer");
+</script>
+</body>
+</html>
